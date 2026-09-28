@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}Event Registrations Management | TechSphere Club{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <h1 style="font-size: 2rem;">Student Event Registrations</h1>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">Monitor student registrations across all club events & export rosters</p>
+    </div>
+
+    <button type="button" onclick="exportRegistrationsCSV()" class="btn btn-emerald" style="background: linear-gradient(135deg, var(--emerald), #059669); color: white;">
+        <i class="fa-solid fa-file-csv"></i> Export Attendance to CSV
+    </button>
+</div>
+
+<!-- Filter Bar -->
+<div class="filter-bar">
+    <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="searchInput" class="search-input" placeholder="Search by student name, roll number, department, or event...">
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 0.5rem;">
+        <label for="eventSelectFilter" style="font-size: 0.85rem; color: var(--text-muted);">Filter Event:</label>
+        <select id="eventSelectFilter" class="form-select" style="width: auto; padding: 0.4rem 0.8rem; font-size: 0.85rem;" onchange="filterTableByEvent(this.value)">
+            <option value="all">All Events</option>
+            {% for ev in events %}
+                <option value="{{ ev.title }}">{{ ev.title }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+
+<!-- Registrations Data Table -->
+<div class="table-responsive">
+    <table class="table" id="registrationsTable">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Student Name</th>
+                <th>Roll / Reg Number</th>
+                <th>Email Address</th>
+                <th>Department</th>
+                <th>Event Title</th>
+                <th>Registration Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reg in registrations %}
+                <tr data-searchable="{{ reg.student_name }} {{ reg.roll_number }} {{ reg.email }} {{ reg.department }} {{ reg.event.title }}" data-event="{{ reg.event.title }}">
+                    <td>{{ loop.index }}</td>
+                    <td><strong>{{ reg.student_name }}</strong></td>
+                    <td><span class="badge badge-purple">{{ reg.roll_number }}</span></td>
+                    <td>{{ reg.email }}</td>
+                    <td>{{ reg.department }}</td>
+                    <td><span class="badge badge-cyan">{{ reg.event.title }}</span></td>
+                    <td style="font-size: 0.85rem; color: var(--text-muted);">{{ reg.created_at.strftime('%b %d, %Y %I:%M %p') }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                        No registrations found.
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function filterTableByEvent(eventTitle) {
+    const rows = document.querySelectorAll('#registrationsTable tbody tr');
+    rows.forEach(row => {
+        const rowEvent = row.getAttribute('data-event');
+        if (eventTitle === 'all' || rowEvent === eventTitle) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+</script>
+{% endblock %}

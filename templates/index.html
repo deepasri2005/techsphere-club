@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+
+{% block title %}TechSphere Club | College Technical Community Portal{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-tagline">
+        <i class="fa-solid fa-bolt" style="color: var(--amber);"></i> Learn. Build. Compete. Share.
+    </div>
+    <h1 class="hero-title">
+        Empowering Student Developers & <br>
+        <span class="gradient-text">Fostering Technical Innovation</span>
+    </h1>
+    <p class="hero-subtitle">
+        TechSphere Club is the central community platform for Computer Science & Engineering students, faculty, and HOD to manage hackathons, coding contests, workshops, project showcases, and tech learning roadmaps.
+    </p>
+    <div class="hero-actions">
+        <a href="{{ url_for('events') }}" class="btn btn-primary btn-lg">
+            <i class="fa-solid fa-calendar-check"></i> Explore Events
+        </a>
+        <a href="{{ url_for('tech_hub') }}" class="btn btn-cyan btn-lg">
+            <i class="fa-solid fa-map-location-dot"></i> Technology Roadmaps
+        </a>
+        {% if not current_user.is_authenticated %}
+            <a href="{{ url_for('login') }}" class="btn btn-outline btn-lg">
+                <i class="fa-solid fa-right-to-bracket"></i> Login / Register
+            </a>
+        {% else %}
+            <a href="{{ url_for('dashboard') }}" class="btn btn-outline btn-lg">
+                <i class="fa-solid fa-gauge-high"></i> Go to Dashboard
+            </a>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Live Platform Stats -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon stat-icon-indigo">
+            <i class="fa-solid fa-trophy"></i>
+        </div>
+        <div>
+            <div class="stat-number">{{ events_count }}</div>
+            <div class="stat-label">Active Events & Hackathons</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon stat-icon-cyan">
+            <i class="fa-solid fa-graduation-cap"></i>
+        </div>
+        <div>
+            <div class="stat-number">{{ courses_count }}</div>
+            <div class="stat-label">Certificate Courses</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon stat-icon-emerald">
+            <i class="fa-solid fa-users"></i>
+        </div>
+        <div>
+            <div class="stat-number">{{ registrations_count }}</div>
+            <div class="stat-label">Student Event Registrations</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon stat-icon-purple">
+            <i class="fa-solid fa-cubes"></i>
+        </div>
+        <div>
+            <div class="stat-number">{{ resources_count }}</div>
+            <div class="stat-label">Tech Resources & Tools</div>
+        </div>
+    </div>
+</div>
+
+<!-- Featured Upcoming Events -->
+<section style="margin-bottom: 3.5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5rem;">
+        <div>
+            <h2 style="font-size: 1.75rem;"><i class="fa-solid fa-fire" style="color: var(--amber);"></i> Upcoming Technical Events</h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">Join upcoming hackathons, coding contests, and workshops</p>
+        </div>
+        <a href="{{ url_for('events') }}" class="btn btn-outline btn-sm">View All Events <i class="fa-solid fa-arrow-right"></i></a>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
+        {% for event in upcoming_events %}
+            <div class="card">
+                <div class="card-header">
+                    <span class="badge badge-purple">{{ event.event_type }}</span>
+                    <span class="badge badge-cyan"><i class="fa-regular fa-clock"></i> {{ event.date.strftime('%b %d, %Y') }}</span>
+                </div>
+                <h3 style="font-size: 1.2rem; margin-bottom: 0.75rem;">{{ event.title }}</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                    {{ event.description }}
+                </p>
+                
+                <div style="margin-bottom: 1rem; font-size: 0.85rem; color: var(--text-muted);">
+                    <div><i class="fa-solid fa-location-dot" style="color: var(--cyan);"></i> {{ event.venue }}</div>
+                    <div><i class="fa-solid fa-user-group" style="color: var(--emerald);"></i> {{ event.registered_count }} / {{ event.capacity }} registered</div>
+                </div>
+
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" style="width: {{ event.capacity_percentage }}%; background: {% if event.is_full %}var(--rose){% elif event.capacity_percentage > 80 %}var(--amber){% else %}var(--emerald){% endif %};"></div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.25rem;">
+                    {% if event.is_full %}
+                        <span class="badge badge-rose">Sold Out</span>
+                    {% else %}
+                        <span class="badge badge-emerald">{{ event.seats_left }} Seats Left</span>
+                    {% endif %}
+                    <a href="{{ url_for('event_detail', event_id=event.id) }}" class="btn btn-cyan btn-sm">View Details & Register</a>
+                </div>
+            </div>
+        {% else %}
+            <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 2rem;">
+                <p style="color: var(--text-muted);">No upcoming events scheduled right now. Check back soon!</p>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Announcements & Popular Courses Grid -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 2rem; margin-bottom: 3.5rem;">
+    <!-- Recent Announcements -->
+    <div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+            <h3 style="font-size: 1.4rem;"><i class="fa-solid fa-bullhorn" style="color: var(--cyan);"></i> Club Announcements</h3>
+            <a href="{{ url_for('announcements') }}" style="font-size: 0.85rem;">View All</a>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+            {% for announcement in latest_announcements %}
+                <div class="card" style="padding: 1.25rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span class="badge badge-cyan">{{ announcement.category }}</span>
+                        <span style="font-size: 0.75rem; color: var(--text-dim);">{{ announcement.created_at.strftime('%b %d') }}</span>
+                    </div>
+                    <h4 style="font-size: 1.05rem; margin-bottom: 0.5rem;">{{ announcement.title }}</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                        {{ announcement.content }}
+                    </p>
+                </div>
+            {% else %}
+                <p style="color: var(--text-muted);">No announcements published yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Featured Courses -->
+    <div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+            <h3 style="font-size: 1.4rem;"><i class="fa-solid fa-award" style="color: var(--emerald);"></i> Popular Certificate Courses</h3>
+            <a href="{{ url_for('courses') }}" style="font-size: 0.85rem;">Browse All</a>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+            {% for course in popular_courses %}
+                <div class="card" style="padding: 1.25rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span class="badge badge-emerald">{{ course.technology }}</span>
+                        <span style="font-size: 0.8rem; color: var(--text-muted);"><i class="fa-solid fa-clock"></i> {{ course.duration }}</span>
+                    </div>
+                    <h4 style="font-size: 1.05rem; margin-bottom: 0.35rem;">{{ course.title }}</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+                        Provider: <strong>{{ course.provider }}</strong> | Level: <span style="color: var(--cyan);">{{ course.level }}</span>
+                    </p>
+                    <a href="{{ course.learning_link }}" target="_blank" class="btn btn-outline btn-sm" style="width: 100%;">
+                        Access Course Module <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    </a>
+                </div>
+            {% else %}
+                <p style="color: var(--text-muted);">No courses added yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Technology Categories Callout -->
+<section class="card" style="text-align: center; padding: 3rem 2rem; background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(6, 182, 212, 0.15)); border-color: rgba(99, 102, 241, 0.3);">
+    <h2 style="font-size: 2rem; margin-bottom: 1rem;">Explore Technology Roadmaps & Tools</h2>
+    <p style="color: var(--text-muted); max-width: 650px; margin: 0 auto 2rem auto;">
+        From Full-Stack Web Development to AI/ML, Cloud Infrastructure, Git/GitHub, and Technical Interview Prep—access structured resources to boost your software engineering career.
+    </p>
+    <div style="display: flex; justify-content: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 2rem;">
+        <span class="badge badge-purple" style="font-size: 0.9rem; padding: 0.5rem 1rem;"><i class="fa-solid fa-brain"></i> AI & Machine Learning</span>
+        <span class="badge badge-cyan" style="font-size: 0.9rem; padding: 0.5rem 1rem;"><i class="fa-solid fa-code"></i> Web Development</span>
+        <span class="badge badge-emerald" style="font-size: 0.9rem; padding: 0.5rem 1rem;"><i class="fa-solid fa-cloud"></i> Cloud & DevOps</span>
+        <span class="badge badge-amber" style="font-size: 0.9rem; padding: 0.5rem 1rem;"><i class="fa-solid fa-laptop-code"></i> Project Ideas</span>
+        <span class="badge badge-purple" style="font-size: 0.9rem; padding: 0.5rem 1rem;"><i class="fa-solid fa-user-graduate"></i> Interview Preparation</span>
+    </div>
+    <a href="{{ url_for('tech_hub') }}" class="btn btn-primary btn-lg">
+        <i class="fa-solid fa-compass"></i> Open Tech Hub Knowledge Base
+    </a>
+</section>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}403 Access Forbidden | TechSphere Club{% endblock %}
+
+{% block content %}
+<div style="text-align: center; padding: 4rem 1rem; max-width: 550px; margin: 0 auto;">
+    <div style="font-size: 5rem; color: #f43f5e; margin-bottom: 1rem;">
+        <i class="fa-solid fa-shield-cat"></i>
+    </div>
+    <h1 style="font-size: 2.5rem; margin-bottom: 1rem;">403 - Access Forbidden</h1>
+    <p style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 2rem;">
+        You do not have the required administrative role permissions to access this action or page.
+    </p>
+    <div style="display: flex; justify-content: center; gap: 1rem;">
+        <a href="{{ url_for('index') }}" class="btn btn-outline">
+            <i class="fa-solid fa-house"></i> Go to Home
+        </a>
+        <a href="{{ url_for('dashboard') }}" class="btn btn-primary">
+            <i class="fa-solid fa-gauge-high"></i> Return to Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ event.title }} | TechSphere Club{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 1.5rem;">
+    <a href="{{ url_for('events') }}" class="btn btn-outline btn-sm">
+        <i class="fa-solid fa-arrow-left"></i> Back to All Events
+    </a>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 2rem;">
+    <!-- Event Info & Specification Card -->
+    <div>
+        <div class="card" style="padding: 2rem; margin-bottom: 1.5rem;">
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap;">
+                <span class="badge badge-purple">{{ event.event_type }}</span>
+                <span class="badge {% if event.status == 'Upcoming' %}badge-cyan{% elif event.status == 'Ongoing' %}badge-emerald{% else %}badge-amber{% endif %}">
+                    {{ event.status }}
+                </span>
+                {% if event.is_full %}
+                    <span class="badge badge-rose">Capacity Full</span>
+                {% elif event.is_deadline_passed %}
+                    <span class="badge badge-rose">Deadline Passed</span>
+                {% else %}
+                    <span class="badge badge-emerald">Registration Open</span>
+                {% endif %}
+            </div>
+
+            <h1 style="font-size: 2rem; margin-bottom: 1rem;">{{ event.title }}</h1>
+            
+            <p style="color: var(--text-muted); font-size: 1rem; line-height: 1.7; margin-bottom: 1.75rem; white-space: pre-line;">
+                {{ event.description }}
+            </p>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; padding: 1.25rem; background: rgba(15, 23, 42, 0.6); border-radius: var(--radius-md); border: 1px solid var(--border-subtle); margin-bottom: 1.5rem;">
+                <div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted);"><i class="fa-regular fa-calendar" style="color: var(--cyan);"></i> Event Date & Time</div>
+                    <div style="font-weight: 600; font-size: 0.95rem;">{{ event.date.strftime('%B %d, %Y at %I:%M %p') }}</div>
+                </div>
+                <div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted);"><i class="fa-solid fa-location-dot" style="color: var(--cyan);"></i> Venue</div>
+                    <div style="font-weight: 600; font-size: 0.95rem;">{{ event.venue }}</div>
+                </div>
+                <div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted);"><i class="fa-solid fa-user-tie" style="color: var(--cyan);"></i> Organizer</div>
+                    <div style="font-weight: 600; font-size: 0.95rem;">{{ event.organizer }}</div>
+                </div>
+                <div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted);"><i class="fa-solid fa-hourglass-half" style="color: var(--amber);"></i> Registration Deadline</div>
+                    <div style="font-weight: 600; font-size: 0.95rem;">{{ event.registration_deadline.strftime('%B %d, %Y at %I:%M %p') }}</div>
+                </div>
+            </div>
+
+            {% if event.registration_link %}
+                <div style="margin-bottom: 1.5rem;">
+                    <a href="{{ event.registration_link }}" target="_blank" class="btn btn-outline" style="width: 100%;">
+                        <i class="fa-solid fa-external-link"></i> External Event Platform Link
+                    </a>
+                </div>
+            {% endif %}
+
+            <!-- Staff Control Actions -->
+            {% if current_user.is_authenticated and current_user.can_manage_events() %}
+                <div style="padding-top: 1rem; border-top: 1px solid var(--border-subtle); display: flex; gap: 0.75rem;">
+                    <a href="{{ url_for('edit_event', event_id=event.id) }}" class="btn btn-outline btn-sm">
+                        <i class="fa-solid fa-pen-to-square"></i> Edit Event
+                    </a>
+                    {% if current_user.can_delete_events() %}
+                        <form method="POST" action="{{ url_for('delete_event', event_id=event.id) }}" onsubmit="return confirm('Are you sure you want to delete this event? All student registrations for this event will also be removed.');">
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                <i class="fa-solid fa-trash-can"></i> Delete Event
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Registration Panel Card -->
+    <div>
+        <div class="card" style="padding: 2rem;">
+            <h3 style="font-size: 1.35rem; margin-bottom: 1rem;"><i class="fa-solid fa-id-card" style="color: var(--cyan);"></i> Event Registration</h3>
+            
+            <div style="margin-bottom: 1.5rem; padding: 1rem; background: rgba(15, 23, 42, 0.7); border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+                <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                    <span>Registered Seats</span>
+                    <span><strong>{{ event.registered_count }}</strong> / {{ event.capacity }}</span>
+                </div>
+                <div class="progress-bar-bg" style="height: 10px;">
+                    <div class="progress-bar-fill" style="width: {{ event.capacity_percentage }}%; background: {% if event.is_full %}var(--rose){% elif event.capacity_percentage > 80 %}var(--amber){% else %}var(--emerald){% endif %};"></div>
+                </div>
+                <div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-muted); text-align: right;">
+                    {% if event.is_full %}
+                        <span style="color: #fb7185; font-weight: 700;">SOLD OUT</span>
+                    {% else %}
+                        <span style="color: #34d399; font-weight: 600;">{{ event.seats_left }} Seats Remaining</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if event.is_full %}
+                <div class="alert alert-danger">
+                    <i class="fa-solid fa-circle-xmark"></i> Registration is closed. This event has reached maximum capacity.
+                </div>
+            {% elif event.is_deadline_passed %}
+                <div class="alert alert-warning">
+                    <i class="fa-solid fa-clock"></i> Registration is closed. The registration deadline has passed.
+                </div>
+            {% else %}
+                <form method="POST" action="{{ url_for('register_event', event_id=event.id) }}">
+                    <div class="form-group">
+                        <label for="student_name" class="form-label">Full Name *</label>
+                        <input type="text" id="student_name" name="student_name" class="form-control" value="{{ current_user.full_name if current_user.is_authenticated else '' }}" placeholder="e.g. Ananya Sen" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="roll_number" class="form-label">Roll / Registration Number *</label>
+                        <input type="text" id="roll_number" name="roll_number" class="form-control" placeholder="e.g. 2026CSE104" required>
+                        <span style="font-size: 0.75rem; color: var(--text-muted);">Duplicate registrations with same roll number are automatically prevented.</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email" class="form-label">Student Email *</label>
+                        <input type="email" id="email" name="email" class="form-control" value="{{ current_user.email if current_user.is_authenticated else '' }}" placeholder="e.g. student@college.edu" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="department" class="form-label">Department *</label>
+                        <select id="department" name="department" class="form-select" required>
+                            <option value="Computer Science & Engineering">Computer Science & Engineering</option>
+                            <option value="Information Technology">Information Technology</option>
+                            <option value="Artificial Intelligence & Data Science">Artificial Intelligence & Data Science</option>
+                            <option value="Electronics & Communication">Electronics & Communication</option>
+                            <option value="Mechanical Engineering">Mechanical Engineering</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-emerald" style="width: 100%; margin-top: 1rem; padding: 0.8rem; background: linear-gradient(135deg, var(--emerald), #059669); color: white;">
+                        <i class="fa-solid fa-paper-plane"></i> Submit Registration
+                    </button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

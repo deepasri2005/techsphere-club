@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}Post Announcement | TechSphere Club{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 1rem auto 4rem auto;">
+    <div style="margin-bottom: 1.5rem;">
+        <a href="{{ url_for('announcements') }}" class="btn btn-outline btn-sm">
+            <i class="fa-solid fa-arrow-left"></i> Cancel & Back to Bulletin
+        </a>
+    </div>
+
+    <div class="card" style="padding: 2.25rem;">
+        <h1 style="font-size: 1.75rem; margin-bottom: 0.5rem;">
+            <i class="fa-solid fa-bullhorn" style="color: var(--amber);"></i> Publish Club Announcement
+        </h1>
+        <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 2rem;">
+            Post official notifications for hackathons, workshops, competitions, and placement sessions.
+        </p>
+
+        <form method="POST">
+            <div class="form-group">
+                <label for="title" class="form-label">Announcement Title *</label>
+                <input type="text" id="title" name="title" class="form-control" placeholder="e.g. 🔥 Registration Open: HackSphere 2026 AI Hackathon!" required>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label for="category" class="form-label">Category *</label>
+                    <select id="category" name="category" class="form-select" required>
+                        <option value="General">General Notice</option>
+                        <option value="Hackathon">Hackathon Alert</option>
+                        <option value="Workshop">Workshop</option>
+                        <option value="Certificate">Certificate Course</option>
+                        <option value="Competition">Competition</option>
+                        <option value="Placement">Placement Session</option>
+                        <option value="Monthly Activity">Monthly Activity</option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="display: flex; align-items: flex-end; padding-bottom: 0.5rem;">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 600;">
+                        <input type="checkbox" name="is_pinned" value="true" style="width: 18px; height: 18px; accent-color: var(--primary);">
+                        <span><i class="fa-solid fa-thumbtack" style="color: var(--amber);"></i> Pin to top of bulletin</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="content" class="form-label">Announcement Message *</label>
+                <textarea id="content" name="content" class="form-control" rows="5" placeholder="Write full details, deadlines, registration steps, and venue details..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem; padding: 0.8rem;">
+                <i class="fa-solid fa-paper-plane"></i> Publish Announcement Notice
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

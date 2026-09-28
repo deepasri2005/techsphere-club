@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+
+{% block title %}HOD Administration & Role Management | TechSphere Club{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <h1 style="font-size: 2rem;"><i class="fa-solid fa-user-shield" style="color: #c084fc;"></i> HOD Administration Console</h1>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">Manage platform users, update role access privileges, and inspect permissions matrix</p>
+    </div>
+</div>
+
+<!-- Permission Overview Matrix -->
+<div class="card" style="margin-bottom: 2rem; padding: 1.5rem;">
+    <h3 style="font-size: 1.25rem; margin-bottom: 1rem; color: #c084fc;">
+        <i class="fa-solid fa-shield-halved"></i> System Role Permission Overview Matrix
+    </h3>
+    <div class="table-responsive">
+        <table class="table" style="font-size: 0.85rem;">
+            <thead>
+                <tr>
+                    <th>Role</th>
+                    <th>Dashboard</th>
+                    <th>Manage Events</th>
+                    <th>Delete Events</th>
+                    <th>Manage Courses</th>
+                    <th>Manage Resources</th>
+                    <th>Publish Announcements</th>
+                    <th>View Registrations</th>
+                    <th>User & Role Admin</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="user-role-pill role-hod">HOD</span></td>
+                    <td><i class="fa-solid fa-check" style="color: var(--emerald);"></i> Full</td>
+                    <td><i class="fa-solid fa-check" style="color: var(--emerald);"></i> Yes</td>
+                    <td><i class="fa-solid fa-check" style="color: var(--emerald);"></i> Yes</td>
+                    <td><i class="fa-solid fa-check" style="color: var(--emerald);"></i> Yes</td>
+                    <td><i class="fa-solid fa-check" style="color: var(--emerald);"></i> Yes</td>
+                    <td><i class="fa-solid fa-check" style="color: var(--emerald);"></i> Yes</td>
+                    <td><i class="fa-solid fa-check" style="color: var(--emerald);"></i> Yes</td>
+                    <td><i class="fa-solid fa-check" style="color: var(--emerald);"></i> Yes (Exclusive)</td>
+                </tr>
+                <tr>
+                    <td><span class="user-role-pill role-faculty">Faculty</span></td>
+                    <td><i class="fa-solid fa-check" style="color: var(--emerald);"></i> Yes</td>
+                    <td><i class="fa-solid fa-check" style="color: var(--emerald);"></i> Yes</td>
+                    <td><i class="fa-solid fa-xmark" style="color: var(--rose);"></i> No</td>
+                    <td><i class="fa-solid fa-check" style="color: var(--emerald);"></i> Yes</td>
+                    <td><i class="fa-solid fa-check" style="color: var(--emerald);"></i> Yes</td>
+                    <td><i class="fa-solid fa-check" style="color: var(--emerald);"></i> Yes</td>
+                    <td><i class="fa-solid fa-check" style="color: var(--emerald);"></i> Yes</td>
+                    <td><i class="fa-solid fa-xmark" style="color: var(--rose);"></i> No</td>
+                </tr>
+                <tr>
+                    <td><span class="user-role-pill role-coordinator">Club Coordinator</span></td>
+                    <td><i class="fa-solid fa-check" style="color: var(--emerald);"></i> Yes</td>
+                    <td><i class="fa-solid fa-check" style="color: var(--emerald);"></i> Yes</td>
+                    <td><i class="fa-solid fa-check" style="color: var(--emerald);"></i> Yes</td>
+                    <td><i class="fa-solid fa-check" style="color: var(--emerald);"></i> Yes</td>
+                    <td><i class="fa-solid fa-check" style="color: var(--emerald);"></i> Yes</td>
+                    <td><i class="fa-solid fa-check" style="color: var(--emerald);"></i> Yes</td>
+                    <td><i class="fa-solid fa-check" style="color: var(--emerald);"></i> Yes</td>
+                    <td><i class="fa-solid fa-xmark" style="color: var(--rose);"></i> No</td>
+                </tr>
+                <tr>
+                    <td><span class="user-role-pill role-event-manager">Event Manager</span></td>
+                    <td><i class="fa-solid fa-check" style="color: var(--emerald);"></i> Yes</td>
+                    <td><i class="fa-solid fa-check" style="color: var(--emerald);"></i> Yes</td>
+                    <td><i class="fa-solid fa-xmark" style="color: var(--rose);"></i> No</td>
+                    <td><i class="fa-solid fa-xmark" style="color: var(--rose);"></i> No</td>
+                    <td><i class="fa-solid fa-xmark" style="color: var(--rose);"></i> No</td>
+                    <td><i class="fa-solid fa-check" style="color: var(--emerald);"></i> Yes (Events)</td>
+                    <td><i class="fa-solid fa-check" style="color: var(--emerald);"></i> Yes</td>
+                    <td><i class="fa-solid fa-xmark" style="color: var(--rose);"></i> No</td>
+                </tr>
+                <tr>
+                    <td><span class="user-role-pill role-student">Student / Viewer</span></td>
+                    <td><i class="fa-solid fa-check" style="color: var(--emerald);"></i> View</td>
+                    <td><i class="fa-solid fa-eye" style="color: var(--cyan);"></i> View / Register</td>
+                    <td><i class="fa-solid fa-xmark" style="color: var(--rose);"></i> No</td>
+                    <td><i class="fa-solid fa-eye" style="color: var(--cyan);"></i> View</td>
+                    <td><i class="fa-solid fa-eye" style="color: var(--cyan);"></i> View</td>
+                    <td><i class="fa-solid fa-eye" style="color: var(--cyan);"></i> View</td>
+                    <td><i class="fa-solid fa-xmark" style="color: var(--rose);"></i> No</td>
+                    <td><i class="fa-solid fa-xmark" style="color: var(--rose);"></i> No</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Search Bar for Users Table -->
+<div class="filter-bar">
+    <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="searchInput" class="search-input" placeholder="Search users by name, username, email, department, or role...">
+    </div>
+</div>
+
+<!-- Users Table -->
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Full Name</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Department</th>
+                <th>Current Role</th>
+                <th>Account Status</th>
+                <th>Role & Status Controls</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for u in users %}
+                <tr data-searchable="{{ u.full_name }} {{ u.username }} {{ u.email }} {{ u.department }} {{ u.role }}">
+                    <td>{{ u.id }}</td>
+                    <td><strong>{{ u.full_name }}</strong></td>
+                    <td><code>{{ u.username }}</code></td>
+                    <td>{{ u.email }}</td>
+                    <td>{{ u.department }}</td>
+                    <td>
+                        <span class="user-role-pill role-{{ u.role|lower|replace(' ', '-') }}">{{ u.role }}</span>
+                    </td>
+                    <td>
+                        {% if u.is_active_account %}
+                            <span class="badge badge-emerald"><i class="fa-solid fa-check"></i> Active</span>
+                        {% else %}
+                            <span class="badge badge-rose"><i class="fa-solid fa-ban"></i> Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form method="POST" action="{{ url_for('admin_update_user', user_id=u.id) }}" style="display: flex; gap: 0.5rem; align-items: center;">
+                            <select name="role" class="form-select" style="padding: 0.35rem 0.6rem; font-size: 0.85rem; width: auto;">
+                                <option value="HOD" {% if u.role == 'HOD' %}selected{% endif %}>HOD</option>
+                                <option value="Faculty" {% if u.role == 'Faculty' %}selected{% endif %}>Faculty</option>
+                                <option value="Club Coordinator" {% if u.role == 'Club Coordinator' %}selected{% endif %}>Club Coordinator</option>
+                                <option value="Event Manager" {% if u.role == 'Event Manager' %}selected{% endif %}>Event Manager</option>
+                                <option value="Student" {% if u.role == 'Student' %}selected{% endif %}>Student</option>
+                            </select>
+
+                            <input type="hidden" name="is_active_account" value="{% if u.is_active_account %}false{% else %}true{% endif %}">
+                            
+                            <button type="submit" class="btn btn-outline btn-sm" title="Save Role">
+                                <i class="fa-solid fa-floppy-disk"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

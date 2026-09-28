@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}Technical Events & Hackathons | TechSphere Club{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <h1 style="font-size: 2rem;">Technical Events & Hackathons</h1>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">Discover workshops, hackathons, coding contests, and technical talks</p>
+    </div>
+
+    {% if current_user.is_authenticated and current_user.can_manage_events() %}
+        <a href="{{ url_for('create_event') }}" class="btn btn-primary">
+            <i class="fa-solid fa-plus"></i> Create New Event
+        </a>
+    {% endif %}
+</div>
+
+<!-- Search & Category Filter Bar -->
+<div class="filter-bar">
+    <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="searchInput" class="search-input" placeholder="Search events by title, organizer, or venue...">
+    </div>
+
+    <div class="filter-pills">
+        <button type="button" class="filter-pill active" data-filter="all">All Events</button>
+        <button type="button" class="filter-pill" data-filter="Hackathon">Hackathons</button>
+        <button type="button" class="filter-pill" data-filter="Coding Contest">Coding Contests</button>
+        <button type="button" class="filter-pill" data-filter="Workshop">Workshops</button>
+        <button type="button" class="filter-pill" data-filter="Seminar">Seminars</button>
+        <button type="button" class="filter-pill" data-filter="Technical Talk">Technical Talks</button>
+        <button type="button" class="filter-pill" data-filter="Project Showcase">Showcases</button>
+    </div>
+</div>
+
+<!-- Event Grid -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
+    {% for event in events %}
+        <div class="card" data-category="{{ event.event_type }}" data-searchable="{{ event.title }} {{ event.event_type }} {{ event.organizer }} {{ event.venue }} {{ event.description }}">
+            <div class="card-header">
+                <span class="badge badge-purple">{{ event.event_type }}</span>
+                <span class="badge {% if event.status == 'Upcoming' %}badge-cyan{% elif event.status == 'Ongoing' %}badge-emerald{% else %}badge-amber{% endif %}">
+                    {{ event.status }}
+                </span>
+            </div>
+
+            <h3 style="font-size: 1.25rem; margin-bottom: 0.75rem;">{{ event.title }}</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                {{ event.description }}
+            </p>
+
+            <div style="margin-bottom: 1rem; font-size: 0.85rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 0.35rem;">
+                <div><i class="fa-solid fa-calendar" style="color: var(--cyan); width: 20px;"></i> {{ event.date.strftime('%B %d, %Y at %I:%M %p') }}</div>
+                <div><i class="fa-solid fa-location-dot" style="color: var(--cyan); width: 20px;"></i> {{ event.venue }}</div>
+                <div><i class="fa-solid fa-user-tie" style="color: var(--cyan); width: 20px;"></i> {{ event.organizer }}</div>
+                <div><i class="fa-solid fa-hourglass-half" style="color: var(--amber); width: 20px;"></i> Deadline: {{ event.registration_deadline.strftime('%b %d, %Y') }}</div>
+            </div>
+
+            <!-- Capacity Progress Indicator -->
+            <div style="margin-bottom: 1.25rem;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted);">
+                    <span>Capacity Registered</span>
+                    <span><strong>{{ event.registered_count }}</strong> / {{ event.capacity }}</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" style="width: {{ event.capacity_percentage }}%; background: {% if event.is_full %}var(--rose){% elif event.capacity_percentage > 80 %}var(--amber){% else %}var(--emerald){% endif %};"></div>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; pt-3; border-top: 1px solid var(--border-subtle);">
+                <span class="badge {% if event.is_full %}badge-rose{% else %}badge-emerald{% endif %}">
+                    {% if event.is_full %}Sold Out{% else %}{{ event.seats_left }} Seats Left{% endif %}
+                </span>
+
+                <div style="display: flex; gap: 0.5rem;">
+                    <a href="{{ url_for('event_detail', event_id=event.id) }}" class="btn btn-cyan btn-sm">
+                        View & Register
+                    </a>
+                    {% if current_user.is_authenticated and current_user.can_manage_events() %}
+                        <a href="{{ url_for('edit_event', event_id=event.id) }}" class="btn btn-outline btn-sm" title="Edit Event">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+            <i class="fa-solid fa-calendar-xmark" style="font-size: 3rem; color: var(--text-dim); margin-bottom: 1rem;"></i>
+            <h3>No Events Available</h3>
+            <p style="color: var(--text-muted);">No technical events match the selected criteria.</p>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

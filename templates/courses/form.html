@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Certificate Course | TechSphere Club{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 1rem auto 4rem auto;">
+    <div style="margin-bottom: 1.5rem;">
+        <a href="{{ url_for('courses') }}" class="btn btn-outline btn-sm">
+            <i class="fa-solid fa-arrow-left"></i> Cancel & Back to Courses
+        </a>
+    </div>
+
+    <div class="card" style="padding: 2.25rem;">
+        <h1 style="font-size: 1.75rem; margin-bottom: 0.5rem;">
+            <i class="fa-solid fa-graduation-cap" style="color: var(--cyan);"></i> Add Certificate Course
+        </h1>
+        <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 2rem;">
+            Publish industry certificate courses and external learning links for students.
+        </p>
+
+        <form method="POST">
+            <div class="form-group">
+                <label for="title" class="form-label">Course Title *</label>
+                <input type="text" id="title" name="title" class="form-control" placeholder="e.g. Deep Learning Specialization with PyTorch" required>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label for="provider" class="form-label">Provider / Organization *</label>
+                    <input type="text" id="provider" name="provider" class="form-control" placeholder="e.g. PyTorch Foundation & DeepLearning.AI" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="technology" class="form-label">Technology *</label>
+                    <select id="technology" name="technology" class="form-select" required>
+                        <option value="Python">Python</option>
+                        <option value="Web Development">Web Development</option>
+                        <option value="Java">Java</option>
+                        <option value="C++">C++</option>
+                        <option value="SQL">SQL</option>
+                        <option value="Data Analytics">Data Analytics</option>
+                        <option value="AI">AI / Machine Learning</option>
+                        <option value="Generative AI">Generative AI</option>
+                        <option value="Cloud">Cloud Infrastructure</option>
+                        <option value="Cybersecurity">Cybersecurity</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label for="level" class="form-label">Skill Level *</label>
+                    <select id="level" name="level" class="form-select" required>
+                        <option value="Beginner">Beginner</option>
+                        <option value="Intermediate">Intermediate</option>
+                        <option value="Advanced">Advanced</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="duration" class="form-label">Estimated Duration *</label>
+                    <input type="text" id="duration" name="duration" class="form-control" placeholder="e.g. 6 Weeks (4 hrs/week)" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="learning_link" class="form-label">Verified External Learning Link (URL) *</label>
+                <input type="url" id="learning_link" name="learning_link" class="form-control" placeholder="https://pytorch.org/tutorials/" required>
+            </div>
+
+            <div class="form-group">
+                <label for="description" class="form-label">Course Overview & Objectives *</label>
+                <textarea id="description" name="description" class="form-control" rows="3" placeholder="Describe the topics covered, prerequisites, and learning outcomes..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-cyan" style="width: 100%; margin-top: 1rem; padding: 0.8rem;">
+                <i class="fa-solid fa-plus"></i> Publish Course Module
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

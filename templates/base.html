@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}TechSphere Club - College Technical Club Community Portal{% endblock %}</title>
+    <!-- Fonts & FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <!-- Header / Navbar -->
+    <header class="navbar">
+        <div class="container nav-container">
+            <a href="{{ url_for('index') }}" class="brand-logo">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-atom"></i>
+                </div>
+                <span>TechSphere <span class="gradient-text-cyan">Club</span></span>
+            </a>
+
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="{{ url_for('index') }}" class="nav-link {% if request.endpoint == 'index' %}active{% endif %}">Home</a></li>
+                <li><a href="{{ url_for('events') }}" class="nav-link {% if 'events' in request.endpoint %}active{% endif %}">Events</a></li>
+                <li><a href="{{ url_for('courses') }}" class="nav-link {% if 'courses' in request.endpoint %}active{% endif %}">Courses</a></li>
+                <li><a href="{{ url_for('tech_hub') }}" class="nav-link {% if 'tech_hub' in request.endpoint %}active{% endif %}">Tech Hub</a></li>
+                <li><a href="{{ url_for('announcements') }}" class="nav-link {% if 'announcements' in request.endpoint %}active{% endif %}">Announcements</a></li>
+                
+                {% if current_user.is_authenticated %}
+                    <li><a href="{{ url_for('dashboard') }}" class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}">Dashboard</a></li>
+                    
+                    {% if current_user.is_staff %}
+                        <li><a href="{{ url_for('registrations') }}" class="nav-link {% if request.endpoint == 'registrations' %}active{% endif %}">Registrations</a></li>
+                    {% endif %}
+                    
+                    {% if current_user.is_hod %}
+                        <li><a href="{{ url_for('admin_users') }}" class="nav-link {% if request.endpoint == 'admin_users' %}active{% endif %}">Users</a></li>
+                    {% endif %}
+
+                    <li class="nav-user-badge">
+                        <span class="user-role-pill role-{{ current_user.role|lower|replace(' ', '-') }}">
+                            {{ current_user.role }}
+                        </span>
+                        <a href="{{ url_for('logout') }}" class="btn btn-outline btn-sm" title="Log Out">
+                            <i class="fa-solid fa-right-from-bracket"></i> Logout
+                        </a>
+                    </li>
+                {% else %}
+                    <li>
+                        <a href="{{ url_for('login') }}" class="btn btn-primary btn-sm">
+                            <i class="fa-solid fa-right-to-bracket"></i> Login
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Flash Message Alerts -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="alert-container">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category if category != 'error' else 'danger' }}">
+                                <span><i class="fa-solid fa-circle-info"></i> {{ message }}</span>
+                                <button type="button" onclick="this.parentElement.remove()" style="background:none; border:none; color:inherit; cursor:pointer;">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="brand-logo" style="margin-bottom: 0.85rem;">
+                        <div class="brand-icon"><i class="fa-solid fa-atom"></i></div>
+                        <span>TechSphere Club</span>
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5;">
+                        The central technical hub for students, faculty, and HOD to learn, build, compete, and innovate together.
+                    </p>
+                </div>
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('events') }}"><i class="fa-solid fa-chevron-right" style="font-size:0.75rem;"></i> Technical Events</a></li>
+                        <li><a href="{{ url_for('courses') }}"><i class="fa-solid fa-chevron-right" style="font-size:0.75rem;"></i> Certificate Courses</a></li>
+                        <li><a href="{{ url_for('tech_hub') }}"><i class="fa-solid fa-chevron-right" style="font-size:0.75rem;"></i> Technology Roadmaps</a></li>
+                        <li><a href="{{ url_for('announcements') }}"><i class="fa-solid fa-chevron-right" style="font-size:0.75rem;"></i> Club Announcements</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Department</h4>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.5rem;">
+                        <i class="fa-solid fa-building-columns" style="color: var(--cyan);"></i> Department of Computer Science & Engineering
+                    </p>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">
+                        <i class="fa-solid fa-envelope" style="color: var(--cyan);"></i> techsphere@college.edu
+                    </p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 TechSphere Club. Final Year Production-Grade Project. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

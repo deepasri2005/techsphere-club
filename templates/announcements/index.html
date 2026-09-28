@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Club Announcements Bulletin | TechSphere Club{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <h1 style="font-size: 2rem;">Club Announcements Bulletin</h1>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">Latest news, hackathon announcements, workshops, and placement sessions</p>
+    </div>
+
+    {% if current_user.is_authenticated and current_user.can_manage_announcements() %}
+        <a href="{{ url_for('create_announcement') }}" class="btn btn-primary">
+            <i class="fa-solid fa-plus"></i> Post Announcement
+        </a>
+    {% endif %}
+</div>
+
+<!-- Search & Category Filter Bar -->
+<div class="filter-bar">
+    <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="searchInput" class="search-input" placeholder="Search announcements...">
+    </div>
+
+    <div class="filter-pills">
+        <button type="button" class="filter-pill active" data-filter="all">All News</button>
+        <button type="button" class="filter-pill" data-filter="Hackathon">Hackathons</button>
+        <button type="button" class="filter-pill" data-filter="Workshop">Workshops</button>
+        <button type="button" class="filter-pill" data-filter="Placement">Placement</button>
+        <button type="button" class="filter-pill" data-filter="Monthly Activity">Monthly Activities</button>
+    </div>
+</div>
+
+<!-- Announcements Bulletin List -->
+<div style="display: flex; flex-direction: column; gap: 1.25rem;">
+    {% for ann in announcements %}
+        <div class="card" data-category="{{ ann.category }}" data-searchable="{{ ann.title }} {{ ann.category }} {{ ann.content }}" style="padding: 1.75rem;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    {% if ann.is_pinned %}
+                        <span class="badge badge-amber"><i class="fa-solid fa-thumbtack"></i> Pinned Announcement</span>
+                    {% endif %}
+                    <span class="badge badge-cyan">{{ ann.category }}</span>
+                </div>
+                <span style="font-size: 0.85rem; color: var(--text-dim);">
+                    <i class="fa-regular fa-clock"></i> Posted {{ ann.created_at.strftime('%B %d, %Y at %I:%M %p') }}
+                </span>
+            </div>
+
+            <h2 style="font-size: 1.35rem; margin-bottom: 0.75rem;">{{ ann.title }}</h2>
+
+            <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.7; white-space: pre-line; margin-bottom: 1rem;">
+                {{ ann.content }}
+            </p>
+
+            {% if current_user.is_authenticated and current_user.can_manage_announcements() %}
+                <div style="display: flex; justify-content: flex-end; padding-top: 0.75rem; border-top: 1px solid var(--border-subtle);">
+                    <form method="POST" action="{{ url_for('delete_announcement', announcement_id=ann.id) }}" onsubmit="return confirm('Delete this announcement?');">
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            <i class="fa-solid fa-trash-can"></i> Delete Notice
+                        </button>
+                    </form>
+                </div>
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="card" style="text-align: center; padding: 3rem;">
+            <i class="fa-solid fa-bullhorn" style="font-size: 3rem; color: var(--text-dim); margin-bottom: 1rem;"></i>
+            <h3>No Announcements Posted</h3>
+            <p style="color: var(--text-muted);">No bulletin posts available at this time.</p>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

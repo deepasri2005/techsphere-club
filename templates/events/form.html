@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ 'Edit Event' if event else 'Create New Event' }} | TechSphere Club{% endblock %}
+
+{% block content %}
+<div style="max-width: 680px; margin: 1rem auto 4rem auto;">
+    <div style="margin-bottom: 1.5rem;">
+        <a href="{{ url_for('events') }}" class="btn btn-outline btn-sm">
+            <i class="fa-solid fa-arrow-left"></i> Cancel & Back to Events
+        </a>
+    </div>
+
+    <div class="card" style="padding: 2.25rem;">
+        <h1 style="font-size: 1.75rem; margin-bottom: 0.5rem;">
+            <i class="fa-solid fa-calendar-plus" style="color: var(--cyan);"></i>
+            {{ 'Edit Event Information' if event else 'Create New Technical Event' }}
+        </h1>
+        <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 2rem;">
+            Publish hackathons, workshops, coding contests, seminars, and technical talks.
+        </p>
+
+        <form method="POST">
+            <div class="form-group">
+                <label for="title" class="form-label">Event Title *</label>
+                <input type="text" id="title" name="title" class="form-control" value="{{ event.title if event else '' }}" placeholder="e.g. HackSphere 2026 AI Hackathon" required>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label for="event_type" class="form-label">Event Type *</label>
+                    <select id="event_type" name="event_type" class="form-select" required>
+                        {% set types = ['Hackathon', 'Competition', 'Workshop', 'Seminar', 'Webinar', 'Project Showcase', 'Coding Contest', 'Technical Talk'] %}
+                        {% for t in types %}
+                            <option value="{{ t }}" {% if event and event.event_type == t %}selected{% endif %}>{{ t }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="status" class="form-label">Event Status *</label>
+                    <select id="status" name="status" class="form-select" required>
+                        {% set statuses = ['Upcoming', 'Ongoing', 'Completed', 'Cancelled'] %}
+                        {% for s in statuses %}
+                            <option value="{{ s }}" {% if event and event.status == s %}selected{% endif %}>{{ s }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="description" class="form-label">Detailed Description *</label>
+                <textarea id="description" name="description" class="form-control" rows="4" placeholder="Describe the objectives, eligibility, cash prizes, schedule, and guidelines..." required>{{ event.description if event else '' }}</textarea>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label for="date" class="form-label">Event Date & Time *</label>
+                    <input type="datetime-local" id="date" name="date" class="form-control" value="{{ event.date.strftime('%Y-%m-%dT%H:%M') if event else '' }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="registration_deadline" class="form-label">Registration Deadline *</label>
+                    <input type="datetime-local" id="registration_deadline" name="registration_deadline" class="form-control" value="{{ event.registration_deadline.strftime('%Y-%m-%dT%H:%M') if event else '' }}" required>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label for="venue" class="form-label">Venue / Room / Platform *</label>
+                    <input type="text" id="venue" name="venue" class="form-control" value="{{ event.venue if event else '' }}" placeholder="e.g. Main Auditorium or Google Meet" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="organizer" class="form-label">Organizer / Cell *</label>
+                    <input type="text" id="organizer" name="organizer" class="form-control" value="{{ event.organizer if event else '' }}" placeholder="e.g. Competitive Programming Cell" required>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label for="capacity" class="form-label">Seat Capacity Limit *</label>
+                    <input type="number" id="capacity" name="capacity" class="form-control" min="1" value="{{ event.capacity if event else '50' }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="registration_link" class="form-label">External Registration Link (Optional)</label>
+                    <input type="url" id="registration_link" name="registration_link" class="form-control" value="{{ event.registration_link if event else '' }}" placeholder="https://external-platform.org">
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem; padding: 0.8rem;">
+                <i class="fa-solid fa-floppy-disk"></i> {{ 'Save Changes' if event else 'Publish Technical Event' }}
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

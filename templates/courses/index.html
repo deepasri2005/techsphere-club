@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}Certificate Courses & Learning Paths | TechSphere Club{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <h1 style="font-size: 2rem;">Certificate Courses & Learning Paths</h1>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">Curated industry certificate courses in Python, Web Dev, AI, Cloud, and Cybersecurity</p>
+    </div>
+
+    {% if current_user.is_authenticated and current_user.can_manage_courses() %}
+        <a href="{{ url_for('create_course') }}" class="btn btn-cyan">
+            <i class="fa-solid fa-plus"></i> Add New Course
+        </a>
+    {% endif %}
+</div>
+
+<!-- Search & Filter Bar -->
+<div class="filter-bar">
+    <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="searchInput" class="search-input" placeholder="Search courses by title, provider, technology, or level...">
+    </div>
+
+    <div class="filter-pills">
+        <button type="button" class="filter-pill active" data-filter="all">All Courses</button>
+        <button type="button" class="filter-pill" data-filter="Python">Python</button>
+        <button type="button" class="filter-pill" data-filter="Web Development">Web Dev</button>
+        <button type="button" class="filter-pill" data-filter="AI">AI & ML</button>
+        <button type="button" class="filter-pill" data-filter="Cloud">Cloud</button>
+        <button type="button" class="filter-pill" data-filter="Cybersecurity">Cybersecurity</button>
+    </div>
+</div>
+
+<!-- Courses Grid -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
+    {% for course in courses %}
+        <div class="card" data-category="{{ course.technology }}" data-searchable="{{ course.title }} {{ course.provider }} {{ course.technology }} {{ course.level }} {{ course.description }}">
+            <div class="card-header">
+                <span class="badge badge-emerald">{{ course.technology }}</span>
+                <span class="badge badge-purple">{{ course.level }}</span>
+            </div>
+
+            <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">{{ course.title }}</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+                <i class="fa-solid fa-building-columns" style="color: var(--cyan);"></i> Provider: <strong>{{ course.provider }}</strong>
+            </p>
+
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.25rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                {{ course.description }}
+            </p>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; font-size: 0.85rem; color: var(--text-muted);">
+                <span><i class="fa-solid fa-clock" style="color: var(--amber);"></i> Duration: {{ course.duration }}</span>
+                <span><i class="fa-solid fa-certificate" style="color: var(--emerald);"></i> Verified Link</span>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 1px solid var(--border-subtle);">
+                <a href="{{ course.learning_link }}" target="_blank" class="btn btn-outline btn-sm" style="flex: 1; margin-right: 0.5rem;">
+                    Access Course Module <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                </a>
+
+                {% if current_user.is_authenticated and current_user.can_manage_courses() %}
+                    <form method="POST" action="{{ url_for('delete_course', course_id=course.id) }}" onsubmit="return confirm('Delete this course module?');">
+                        <button type="submit" class="btn btn-danger btn-sm" title="Delete Course">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    {% else %}
+        <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+            <i class="fa-solid fa-graduation-cap" style="font-size: 3rem; color: var(--text-dim); margin-bottom: 1rem;"></i>
+            <h3>No Courses Found</h3>
+            <p style="color: var(--text-muted);">No certificate courses match your criteria.</p>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
